@@ -1,10 +1,10 @@
-import { useState } from "react";
+import DateCounter from "./DateCounter";
 
 function App() {
     return (
-        <>
-            <h1>Projet react quizz</h1>
-        </>
+        <div>
+            <DateCounter />
+        </div>
     );
 }
 
