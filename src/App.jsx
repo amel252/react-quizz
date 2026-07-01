@@ -1,9 +1,15 @@
-import DateCounter from "./DateCounter";
+import DateCounter from "./components/DateCounter";
+import Header from "./Layout/Header";
+import Main from "./Layout/Main";
 
 function App() {
     return (
-        <div>
-            <DateCounter />
+        <div className="app">
+            <Header />
+            <Main>
+                <p>1/15</p>
+                <p>Question ?</p>
+            </Main>
         </div>
     );
 }
