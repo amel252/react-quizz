@@ -11,6 +11,8 @@ const initialState = {
     questions: [],
     // le status de notre state au départ , les diff states "loading","error","ready","active", "finished"
     status: "loading",
+    //  pour passer a la question suivante l'index passera de 0 à 1
+    index: 0,
 };
 function reducer(state, action) {
     switch (action.type) {
@@ -35,7 +37,10 @@ function reducer(state, action) {
     }
 }
 function App() {
-    const [{ questions, status }, dispatch] = useReducer(reducer, initialState);
+    const [{ questions, status, index }, dispatch] = useReducer(
+        reducer,
+        initialState,
+    );
 
     const numQuestions = questions.length;
     useEffect(function () {
@@ -56,7 +61,9 @@ function App() {
                         dispatch={dispatch}
                     />
                 )}
-                {status === "active" && <Question />}
+                {status === "active" && (
+                    <Question question={questions[index]} />
+                )}
             </Main>
         </div>
     );
