@@ -13,6 +13,8 @@ const initialState = {
     status: "loading",
     //  pour passer a la question suivante l'index passera de 0 à 1
     index: 0,
+    answer: null,
+    points: 0,
 };
 function reducer(state, action) {
     switch (action.type) {
@@ -27,6 +29,17 @@ function reducer(state, action) {
                 ...state,
                 status: "active",
             };
+        case "newAnswer":
+            const question = state.questions.at(state.index);
+            //  les points ne sont pas identique sont on additionne
+            return {
+                ...state,
+                answer: action.payload,
+                points:
+                    action.payload === question.correctOption
+                        ? state.points + question.points
+                        : state.points,
+            };
         case "dataFailed":
             return {
                 ...state,
@@ -37,7 +50,7 @@ function reducer(state, action) {
     }
 }
 function App() {
-    const [{ questions, status, index }, dispatch] = useReducer(
+    const [{ questions, status, index, answer }, dispatch] = useReducer(
         reducer,
         initialState,
     );
@@ -62,7 +75,11 @@ function App() {
                     />
                 )}
                 {status === "active" && (
-                    <Question question={questions[index]} />
+                    <Question
+                        question={questions[index]}
+                        dispatch={dispatch}
+                        answer={answer}
+                    />
                 )}
             </Main>
         </div>
