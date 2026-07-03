@@ -5,6 +5,7 @@ import Main from "./Layout/Main";
 import Loader from "./components/Loader";
 import Error from "./components/Error";
 import StartScreen from "./components/StartScreen";
+import Question from "./components/Question";
 
 const initialState = {
     questions: [],
@@ -18,6 +19,11 @@ function reducer(state, action) {
                 ...state,
                 questions: action.payload,
                 status: "ready",
+            };
+        case "start":
+            return {
+                ...state,
+                status: "active",
             };
         case "dataFailed":
             return {
@@ -45,8 +51,12 @@ function App() {
                 {status === "loading" && <Loader />}
                 {status === "error" && <Error />}
                 {status === "ready" && (
-                    <StartScreen numQuestions={numQuestions} />
+                    <StartScreen
+                        numQuestions={numQuestions}
+                        dispatch={dispatch}
+                    />
                 )}
+                {status === "active" && <Question />}
             </Main>
         </div>
     );
