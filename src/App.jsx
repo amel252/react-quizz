@@ -9,7 +9,10 @@ import Question from "./components/Question";
 import NextButton from "./components/NextButton";
 import Progress from "./components/Progress";
 import FinishScreen from "./components/FinishScreen";
+import Timer from "./components/Timer";
+import Footer from "./components/Footer";
 
+const SECS_PER_QUESTION = 30;
 const initialState = {
     questions: [],
     // le status de notre state au départ , les diff states "loading","error","ready","active", "finished"
@@ -19,6 +22,7 @@ const initialState = {
     answer: null,
     points: 0,
     highscore: 0,
+    secondsRemaining: 0,
 };
 function reducer(state, action) {
     switch (action.type) {
@@ -28,10 +32,12 @@ function reducer(state, action) {
                 questions: action.payload,
                 status: "ready",
             };
+        //  une fois le quiz est lancé le chrono démmare
         case "start":
             return {
                 ...state,
                 status: "active",
+                secondsRemaining: state.questions.length * SECS_PER_QUESTION,
             };
         case "newAnswer":
             const question = state.questions.at(state.index);
@@ -80,13 +86,31 @@ function reducer(state, action) {
                 answer: null,
                 status: "ready",
             };
+        case "tick":
+            return {
+                ...state,
+                secondsRemaining: state.secondsRemaining - 1,
+                //  si le temps est écoulé l'état du quiz passe en finish
+                status:
+                    state.secondsRemaining === 0 ? "finished" : state.status,
+            };
         default:
             throw new Error("Action unknown");
     }
 }
 function App() {
-    const [{ questions, status, index, answer, points, highscore }, dispatch] =
-        useReducer(reducer, initialState);
+    const [
+        {
+            questions,
+            status,
+            index,
+            answer,
+            points,
+            highscore,
+            secondsRemaining,
+        },
+        dispatch,
+    ] = useReducer(reducer, initialState);
 
     const numQuestions = questions.length;
     //  pour faire le calcul des points
@@ -128,12 +152,18 @@ function App() {
                             dispatch={dispatch}
                             answer={answer}
                         />
-                        <NextButton
-                            dispatch={dispatch}
-                            answer={answer}
-                            numQuestions={numQuestions}
-                            index={index}
-                        />
+                        <Footer>
+                            <Timer
+                                dispatch={dispatch}
+                                secondsRemaining={secondsRemaining}
+                            />
+                            <NextButton
+                                dispatch={dispatch}
+                                answer={answer}
+                                numQuestions={numQuestions}
+                                index={index}
+                            />
+                        </Footer>
                     </>
                 )}
                 {/*  une fois le quiz est fini  */}
